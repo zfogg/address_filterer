@@ -42,7 +42,7 @@ def without_duplicates(data, duplication_keys):
 	print "Filtering duplicates . . ."
 	print "Duplication signature: %s" % str(duplication_keys)
 	
-	return duplicate_filter(data, dict_signaturizer(duplication_keys))
+	return signature_filter(data, dict_signaturizer(duplication_keys))
 		
 def write_data(data, outfile=OUTFILE):
 	with open(outfile, "wb") as file:
@@ -91,17 +91,17 @@ def valid_dict(dict, valid_keys):
 	
 	return True
 	
-def duplicate_filter(collection, signaturize=lambda x: x):
+def signature_filter(collection, signaturize=lambda x: x):
 	# Credit: Alex Martelli - http://www.peterbe.com/plog/uniqifiers-benchmark
-    signatures = {}
-    results = []
-    for item in collection:
-        sig = signaturize(item)
-        if sig not in signatures:
-            signatures[sig] = True
-            results.append(item)
+	signatures = {}
+	results = []
+	for item in collection:
+		sig = signaturize(item)
+		if sig not in signatures:
+			signatures[sig] = True
+			results.append(item)
 			
-    return results
+	return results
 
 def dict_signaturizer(signature_keys):
 	def signature(dict):
