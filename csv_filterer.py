@@ -4,14 +4,13 @@ from glob import glob
 
 THIS_FILE = os.path.abspath(__file__)
 THIS_DIR = os.path.split(THIS_FILE)[0]
-PARENT_DIR = os.path.split(THIS_DIR)[0]
-OUTFILE = PARENT_DIR + "\\results.csv"
+OUTFILE = THIS_DIR + "\\results.csv"
 
 def main(files):
-	print "\n\t###\n"
+	print "\n### %s ###\n" % __file__
 	
 	csv_data = csv_from_files(files)
-	print "\n\n\tTotal addresses: %d\n" % len(csv_data)
+	print "Total addresses: %d\n" % len(csv_data)
 	
 	csv_data = without_invalid(csv_data, ('zip', 'city'))
 	print "Without invalid: %d\n" % len(csv_data)
@@ -111,4 +110,4 @@ def dict_signaturizer(signature_keys):
 	
 	
 if __name__ == "__main__":
-	main( glob( os.path.join( PARENT_DIR + "\\data\\", '*.csv' ) ) )
+	main( glob( os.path.join( THIS_DIR + "\\data\\", '*.csv' ) ) )
