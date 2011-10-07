@@ -5,16 +5,22 @@ from glob import glob
 THIS_FILE = os.path.abspath(__file__)
 THIS_DIR = os.path.split(THIS_FILE)[0]
 PARENT_DIR = os.path.split(THIS_DIR)[0]
+OUTFILE = PARENT_DIR + "\\results.csv"
 
 def main(files):
 	print "\n\t###\n"
+	
 	csv_data = csv_from_files(files)
 	print "\n\n\tTotal addresses: %d\n" % len(csv_data)
+	
 	csv_data = without_invalid(csv_data)
 	print "Without invalid: %d\n" % len(csv_data)
+	
 	csv_data = without_duplicates(csv_data)
 	print "Without duplicates: %d\n" % len(csv_data)
+	
 	write_data(csv_data)
+	print "Data written to: \n%s" % OUTFILE
 	
 def csv_from_files(files):
 	csv_data = []
@@ -34,18 +40,18 @@ def without_duplicates(data):
 	print "Filtering duplicates . . ."
 	unique_keys = ('address1', 'zip')
 	print "Duplication signature: %s" % str(unique_keys)
-	return f5_filter( [x for x in data], address_signature(unique_keys) )
+	return duplicate_filter( [x for x in data], address_signature(unique_keys) )
 		
-def write_data(data):
-	with open(PARENT_DIR + "\\results.csv", "wb") as f:
+def write_data(data, outfile=OUTFILE):
+	with open(outfile, "wb") as f:
 		writer = csv.DictWriter(f, data[0].keys(), extrasaction='ignore')
 		writer.writeheader()
 		writer.writerows(data)
 
 def valid_dict(dict, valid_keys):
 	for k in valid_keys:
-		if not dict[k]: return False
-		
+		if not dict[k]:
+			return False
 	c = dict['country']
 	if c != 'US' and c != 'USA' and c != '':
 		return False
@@ -63,15 +69,15 @@ def address_signature(unique_keys):
 		return tuple(signature)
 	return f
 	
-def f5_filter(seq, idfun=lambda x: x):
-	seen = {}
-	result = []
-	for item in seq:
-		marker = idfun(item)
-		if marker in seen: continue
-		seen[marker] = 1
-		result.append(item)
-	return result
+def duplicate_filter(set, idfun=lambda x: x): # Credit: Alex Martelli - http://www.peterbe.com/plog/uniqifiers-benchmark
+    seen = {}
+    result = []
+    for item in set:
+        marker = idfun(item)
+        if marker not in seen:
+            seen[marker] = 1
+            result.append(item)
+    return result
 		
 def clean_dict(dict):
 	def clean(text, key):
