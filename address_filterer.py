@@ -9,41 +9,40 @@ OUTFILE = THIS_DIR + "\\results.csv"
 def main(files):
 	print "\n### %s ###\n" % __file__
 	
-	csv_data = csv_from_files(files)
-	print "Total addresses: %d\n" % len(csv_data)
+	addresses = addresses_from_files(files)
+	print "Total addresses: %d\n" % len(addresses)
 	
-	csv_data = without_invalid(csv_data, ('zip', 'city'))
-	print "Without invalid: %d\n" % len(csv_data)
+	addresses = without_invalid(addresses, ('zip', 'city'))
+	print "Without invalid: %d\n" % len(addresses)
 	
-	csv_data = without_duplicates(csv_data, ('address1', 'zip'))
-	print "Without duplicates: %d\n" % len(csv_data)
+	addresses = without_duplicates(addresses, ('address1', 'zip'))
+	print "Without duplicates: %d\n" % len(addresses)
 	
-	write_data(csv_data)
+	write_addresses(addresses)
 	print "Data written to: \n%s" % OUTFILE
 	
-def csv_from_files(files):
-	csv_data = []
-	clean_dict = dict_kv_mapper(clean_text)
+def addresses_from_files(files):
+	addresses = []
+	clean_address = dict_kv_mapper(clean_text)
 	for file in files:
 		print "Reading file: %s" % file.split("\\")[-1]
-		data = [clean_dict(dict) for dict in csv.DictReader( open(file) )]
-		csv_data += data
+		addresses += [clean_address(address) for address in csv.DictReader( open(file) )]
 		
-	return csv_data
+	return addresses
 	
 def without_invalid(data, validation_keys):
 	print "Validating addresses . . ."
 	print "Validation keys: %s" % str(validation_keys)
 	
-	return [dict for dict in data if valid_dict(dict, validation_keys)]
+	return [address for address in data if valid_address(address, validation_keys)]
 	
 def without_duplicates(data, duplication_keys):
 	print "Filtering duplicates . . ."
 	print "Duplication signature: %s" % str(duplication_keys)
 	
-	return signature_filter(data, dict_signaturizer(duplication_keys))
+	return signature_filter(data, address_signaturizer(duplication_keys))
 		
-def write_data(data, outfile=OUTFILE):
+def write_addresses(data, outfile=OUTFILE):
 	with open(outfile, "wb") as file:
 		writer = csv.DictWriter(file, data[0].keys(), extrasaction='ignore')
 		writer.writeheader()
@@ -77,15 +76,15 @@ def clean_text(key, text):
 		
 	return text
 
-def valid_dict(dict, valid_keys):
+def valid_address(address, valid_keys):
 	for k in valid_keys:
-		if not dict[k]:
+		if not address[k]:
 			return False
 			
-	c = dict['country']
+	c = address['country']
 	if c != 'US' and c != 'USA' and c != '':
 		return False
-	if not dict['zip'].isdigit():
+	if not address['zip'].isdigit():
 		return False
 	
 	return True
@@ -102,12 +101,12 @@ def signature_filter(collection, signaturize=lambda x: x):
 			
 	return results
 
-def dict_signaturizer(signature_keys):
-	def signature(dict):
-		return tuple([v for k, v in dict.items() if k in signature_keys])
+def address_signaturizer(signature_keys):
+	def signaturize(address):
+		return tuple([v for k, v in address.items() if k in signature_keys])
 		
-	return signature
-	
+	return signaturize
+
 	
 if __name__ == "__main__":
 	main( glob( os.path.join( THIS_DIR + "\\data\\", '*.csv' ) ) )
