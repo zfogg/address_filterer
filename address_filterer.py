@@ -6,7 +6,7 @@ from glob import glob
 
 THIS_FILE = os.path.abspath(__file__)
 THIS_DIR = os.path.split(THIS_FILE)[0]
-OUTFILE = THIS_DIR + "\\results.csv"
+OUTFILE = THIS_DIR + "/results.csv"
 
 def main(files):
 	print "\n### %s ###\n" % __file__
@@ -27,7 +27,7 @@ def addresses_from_files(files):
 	addresses = []
 	clean_address = dict_kv_mapper(clean_text)
 	for file in files:
-		print "Reading file: %s" % file.split("\\")[-1]
+		print "Reading file: %s" % file.split("/")[-1]
 		addresses += [clean_address(address) for address in csv.DictReader( open(file) )]
 
 	return addresses
@@ -111,4 +111,4 @@ def address_signaturizer(signature_keys):
 
 
 if __name__ == "__main__":
-	main( glob( os.path.join( THIS_DIR + "\\data\\", '*.csv' ) ) )
+	main( glob( os.path.join( THIS_DIR + "/data/", '*.csv' ) ) )
