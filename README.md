@@ -9,7 +9,7 @@
     2. Files must contain the same exact column headers.
 4. Make a folder named `data` in the same directory as `address_filterer.py`. Place organized data files in it.
 5. From a command shell, navigate to the script's folder and issue this command:  
-    python address_filterer.py
+    `python address_filterer.py`
 
 *See the section title 'Usage' for more detailed instructions.*
 
@@ -44,7 +44,7 @@ Organize the data in your files such that the first row contains the column head
 Finally, you may want to edit the script's main method, if you would like to customize what quantifies an invalid or duplicate address. Change the second arguments of the without_invalid and without_duplicates functions to the data column headers of your choosing. The defaults are what worked for the company I wrote this for.
 
 Once you've done that, open a terminal and run the script like so:
-    $ python2.7 address_filterer.py
+    `$ python2.7 address_filterer.py`
 
 ## TODO
 
